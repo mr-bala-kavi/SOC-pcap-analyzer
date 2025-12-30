@@ -1,0 +1,223 @@
+# Attack Signature Rules for SOC PCAP Analyzer
+# These rules define patterns used to detect various attack types
+
+# Port Scan Detection
+port_scan:
+  description: "Detect port scanning activity"
+  enabled: true
+  thresholds:
+    ports_per_host: 20
+    time_window_seconds: 60
+  severity: high
+  mitre_technique: T1046
+
+# Brute Force Detection
+brute_force:
+  description: "Detect authentication brute force attempts"
+  enabled: true
+  target_ports:
+    - port: 22
+      service: SSH
+    - port: 21
+      service: FTP
+    - port: 23
+      service: Telnet
+    - port: 3389
+      service: RDP
+    - port: 5900
+      service: VNC
+    - port: 3306
+      service: MySQL
+    - port: 5432
+      service: PostgreSQL
+    - port: 1433
+      service: MSSQL
+  thresholds:
+    attempts: 5
+    time_window_seconds: 300
+  severity: high
+  mitre_technique: T1110
+
+# C2 Beaconing Detection
+c2_beacon:
+  description: "Detect Command & Control beaconing patterns"
+  enabled: true
+  thresholds:
+    min_connections: 10
+    interval_tolerance: 0.1
+  suspicious_ports:
+    - 4444  # Metasploit default
+    - 8080  # HTTP alternate
+    - 8443  # HTTPS alternate
+    - 1337  # Common hacker port
+    - 31337 # Back Orifice
+  severity: critical
+  mitre_technique: T1071
+
+# Data Exfiltration Detection
+data_exfiltration:
+  description: "Detect potential data exfiltration"
+  enabled: true
+  thresholds:
+    bytes_threshold: 10485760  # 10MB
+    dns_query_length: 50
+  severity: critical
+  mitre_technique: T1048
+
+# DNS Tunneling Detection
+dns_tunneling:
+  description: "Detect DNS tunneling for C2 or exfiltration"
+  enabled: true
+  indicators:
+    - long_queries: true
+      min_length: 50
+    - high_frequency: true
+      queries_per_minute: 100
+    - unusual_record_types:
+        - TXT
+        - NULL
+        - PRIVATE
+  severity: high
+  mitre_technique: T1071.004
+
+# SQL Injection Detection
+sql_injection:
+  description: "Detect SQL injection attempts in HTTP traffic"
+  enabled: true
+  patterns:
+    - "' OR '1'='1"
+    - "' OR 1=1"
+    - "'; DROP"
+    - "UNION SELECT"
+    - "' AND '"
+    - "1=1--"
+    - "admin'--"
+    - "' OR ''='"
+    - "'; EXEC"
+    - "xp_cmdshell"
+    - "WAITFOR DELAY"
+    - "BENCHMARK("
+  severity: critical
+  mitre_technique: T1190
+
+# Command Injection Detection
+command_injection:
+  description: "Detect command injection attempts"
+  enabled: true
+  patterns:
+    - "; cat "
+    - "| cat "
+    - "`cat "
+    - "$(cat "
+    - "; ls "
+    - "| ls "
+    - "; id"
+    - "| id"
+    - "; whoami"
+    - "| whoami"
+    - "; nc "
+    - "| nc "
+    - "; wget "
+    - "| wget "
+    - "; curl "
+    - "| curl "
+    - "/bin/sh"
+    - "/bin/bash"
+    - "cmd.exe"
+    - "powershell"
+  severity: critical
+  mitre_technique: T1059
+
+# Directory Traversal Detection
+directory_traversal:
+  description: "Detect path traversal attempts"
+  enabled: true
+  patterns:
+    - "../"
+    - "..\\"
+    - "%2e%2e%2f"
+    - "%2e%2e/"
+    - "..%2f"
+    - "%2e%2e%5c"
+    - "..%5c"
+    - "/etc/passwd"
+    - "/etc/shadow"
+    - "C:\\Windows"
+    - "boot.ini"
+  severity: high
+  mitre_technique: T1083
+
+# Suspicious User Agents
+suspicious_user_agents:
+  description: "Detect suspicious HTTP user agents"
+  enabled: true
+  patterns:
+    - pattern: "curl/"
+      category: automation
+      severity: low
+    - pattern: "wget/"
+      category: automation
+      severity: low
+    - pattern: "python-requests"
+      category: automation
+      severity: low
+    - pattern: "powershell"
+      category: suspicious
+      severity: high
+    - pattern: "certutil"
+      category: suspicious
+      severity: high
+    - pattern: "sqlmap"
+      category: attack_tool
+      severity: critical
+    - pattern: "nikto"
+      category: scanner
+      severity: high
+    - pattern: "nmap"
+      category: scanner
+      severity: medium
+    - pattern: "masscan"
+      category: scanner
+      severity: high
+    - pattern: "gobuster"
+      category: scanner
+      severity: medium
+  mitre_technique: T1071.001
+
+# Suspicious Protocols
+suspicious_protocols:
+  description: "Detect usage of suspicious protocols"
+  enabled: true
+  protocols:
+    - protocol: IRC
+      severity: medium
+      description: "IRC often used for C2"
+    - protocol: TELNET
+      severity: medium
+      description: "Unencrypted remote access"
+    - protocol: FTP
+      severity: low
+      description: "Unencrypted file transfer"
+    - protocol: TFTP
+      severity: medium
+      description: "Often used for malware delivery"
+  mitre_technique: T1071
+
+# ARP Spoofing Detection
+arp_spoofing:
+  description: "Detect ARP spoofing indicators"
+  enabled: true
+  thresholds:
+    arp_packet_threshold: 1000
+  severity: high
+  mitre_technique: T1557.002
+
+# DoS/DDoS Detection
+dos_detection:
+  description: "Detect denial of service patterns"
+  enabled: true
+  thresholds:
+    packets_per_second: 10000
+    syn_flood_ratio: 0.8
+  severity: critical
+  mitre_technique: T1498

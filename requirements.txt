@@ -1,0 +1,19 @@
+# Core dependencies
+scapy>=2.5.0
+PyYAML>=6.0
+Jinja2>=3.1.0
+
+# PDF generation
+weasyprint>=60.0
+
+# API clients
+requests>=2.31.0
+
+# Environment variables
+python-dotenv>=1.0.0
+
+# CLI
+argparse
+
+# Testing
+pytest>=7.0.0

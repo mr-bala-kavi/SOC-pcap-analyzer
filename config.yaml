@@ -1,0 +1,69 @@
+# SOC PCAP Analyzer Configuration
+
+analysis:
+  # Maximum packets to process (0 = unlimited)
+  max_packets: 0
+  # Analysis timeout in seconds
+  timeout_seconds: 300
+  # Chunk size for stream processing
+  chunk_size: 10000
+
+detection:
+  # Port scan: number of unique ports from single IP
+  port_scan_threshold: 20
+  # Port scan: time window in seconds
+  port_scan_window: 60
+  # Brute force: failed attempts threshold
+  brute_force_threshold: 5
+  # Brute force: time window in seconds
+  brute_force_window: 300
+  # C2 beacon: interval tolerance (0.1 = 10%)
+  beacon_interval_tolerance: 0.1
+  # Minimum beacon count to flag
+  min_beacon_count: 10
+  # Data exfil: bytes threshold for single connection
+  exfil_bytes_threshold: 10485760  # 10MB
+  # DNS tunneling: query length threshold
+  dns_tunnel_query_length: 50
+
+reporting:
+  # Default output format: pdf, markdown, json
+  default_format: pdf
+  # Include raw packet samples in report
+  include_raw_packets: false
+  # Maximum IOCs per section
+  max_iocs_per_section: 50
+  # Report title prefix
+  title_prefix: "Security Incident Report"
+
+threat_intel:
+  # VirusTotal API configuration
+  virustotal:
+    enabled: true
+    api_key: ""  # Set via VIRUSTOTAL_API_KEY environment variable
+    # Rate limit: requests per minute (free tier = 4)
+    rate_limit: 4
+  # AbuseIPDB API configuration
+  abuseipdb:
+    enabled: true
+    api_key: ""  # Set via ABUSEIPDB_API_KEY environment variable
+    # Confidence score threshold (0-100)
+    confidence_threshold: 50
+
+logging:
+  # Log level: DEBUG, INFO, WARNING, ERROR
+  level: INFO
+  # Log file path (empty = console only)
+  file: ""
+  # Log format
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+
+# Known safe IPs/networks to exclude from alerts
+whitelist:
+  ips:
+    - "127.0.0.1"
+    - "::1"
+  networks:
+    - "10.0.0.0/8"
+    - "172.16.0.0/12"
+    - "192.168.0.0/16"

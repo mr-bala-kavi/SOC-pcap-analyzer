@@ -1,0 +1,155 @@
+# IOC (Indicators of Compromise) Database
+# This file contains known malicious indicators for local checking
+
+# Malicious IP Addresses
+# Add known bad IPs here
+malicious_ips:
+  # Example entries (add real IOCs as needed)
+  # - ip: "1.2.3.4"
+  #   category: "malware_c2"
+  #   description: "Known Emotet C2 server"
+  #   severity: "critical"
+  #   last_seen: "2024-01-15"
+  []
+
+# Malicious Domains
+malicious_domains:
+  # Example entries
+  # - domain: "evil-malware.com"
+  #   category: "malware"
+  #   description: "Known malware distribution"
+  #   severity: "critical"
+  []
+
+# Malicious File Hashes (MD5, SHA1, SHA256)
+malicious_hashes:
+  []
+
+# Suspicious Ports
+suspicious_ports:
+  - port: 4444
+    description: "Metasploit default reverse shell"
+    severity: "high"
+  - port: 5555
+    description: "Android ADB (potential compromise)"
+    severity: "medium"
+  - port: 6666
+    description: "IRC (potential C2)"
+    severity: "medium"
+  - port: 6667
+    description: "IRC (potential C2)"
+    severity: "medium"
+  - port: 31337
+    description: "Back Orifice trojan"
+    severity: "critical"
+  - port: 12345
+    description: "NetBus trojan"
+    severity: "critical"
+  - port: 1337
+    description: "Common hacker port"
+    severity: "medium"
+  - port: 9001
+    description: "Tor default OR port"
+    severity: "low"
+  - port: 9050
+    description: "Tor SOCKS proxy"
+    severity: "low"
+
+# Suspicious User Agents
+suspicious_user_agents:
+  - pattern: "curl/"
+    category: "automation"
+    severity: "low"
+  - pattern: "wget/"
+    category: "automation"
+    severity: "low"
+  - pattern: "python-requests"
+    category: "automation"
+    severity: "low"
+  - pattern: "python-urllib"
+    category: "automation"
+    severity: "low"
+  - pattern: "powershell"
+    category: "suspicious"
+    severity: "high"
+  - pattern: "certutil"
+    category: "suspicious"
+    severity: "high"
+  - pattern: "bitsadmin"
+    category: "suspicious"
+    severity: "high"
+  - pattern: "mshta"
+    category: "suspicious"
+    severity: "high"
+
+# Known C2 Indicators
+c2_indicators:
+  cobalt_strike:
+    user_agents:
+      - "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident/5.0)"
+      - "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1; WOW64; Trident/4.0)"
+    default_uris:
+      - "/submit.php"
+      - "/pixel.gif"
+      - "/__utm.gif"
+      - "/updates.rss"
+      - "/fwlink"
+    default_ports:
+      - 80
+      - 443
+      - 8080
+      - 8443
+
+  metasploit:
+    default_ports:
+      - 4444
+      - 4445
+      - 5555
+
+  empire:
+    user_agents:
+      - "Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0)"
+    default_uris:
+      - "/admin/get.php"
+      - "/news.php"
+      - "/login/process.php"
+
+# Suspicious DNS Patterns
+suspicious_dns:
+  # Very long subdomains (potential DNS tunneling)
+  max_subdomain_length: 50
+
+  # Suspicious TLDs
+  suspicious_tlds:
+    - ".xyz"
+    - ".top"
+    - ".win"
+    - ".loan"
+    - ".click"
+    - ".gdn"
+    - ".racing"
+
+  # Known DGA patterns (regex)
+  dga_patterns:
+    - "[a-z]{15,}\\.(com|net|org)"
+    - "[0-9a-z]{20,}\\."
+
+# Network Ranges to Whitelist (exclude from alerts)
+whitelist:
+  networks:
+    - "10.0.0.0/8"
+    - "172.16.0.0/12"
+    - "192.168.0.0/16"
+    - "127.0.0.0/8"
+    - "::1/128"
+
+  # Known good IPs (internal DNS, gateways, etc.)
+  ips: []
+
+  # Known good domains
+  domains:
+    - "microsoft.com"
+    - "windows.com"
+    - "google.com"
+    - "googleapis.com"
+    - "gstatic.com"
